@@ -3,7 +3,6 @@ export default function ({ app }, inject) {
   const adobeFonts = (d) => {
     var config = {
       kitId: 'sgs2wtm',
-      
         scriptTimeout: 3000,
         async: true,
       },
