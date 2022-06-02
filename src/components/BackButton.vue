@@ -13,7 +13,7 @@
 
 .layout{
   padding-top: 4.8rem;
-  padding-right: 3.7rem;
+  padding-right: 4.5rem;
   padding-bottom: 1rem;
   display: flex;
   justify-content: end;
