@@ -1,6 +1,7 @@
 <template>
 <div class="works_info">
 
+<!-- タイトルと役割・製作期 -->
   <h1 class="works_info_title">{{title}}</h1>
 
   <div class="works_info_data">
@@ -14,10 +15,12 @@
     </div>
   </div>
 
+<!-- トップ画像 -->
   <div class="top_img">
       <img :src="topPicture">
   </div>
 
+<!-- 製作物の情報のセット -->
   <div class="works_info_set">
     <div class="works_info_left">
       <h2 class="works_info_heading">{{heading}}</h2>
@@ -28,9 +31,11 @@
     </div>
   </div>
 
+<!-- 製作物の画像リスト -->
   <div class="img_list">
     <div class="img_picture" v-for="picture in pictures" :key="picture">
-      <img :src="picture">
+<!-- IntersectionObserverでアニメーションを追加 -->
+      <img :src="picture" id="is_show_img" v-bind:class='{isShowAnime:IsEntry}' @click="startaniem">
     </div>
   </div>
 
@@ -42,7 +47,19 @@
 
 export default{
   props:['title','role','date','heading','subHeading','sentence','topPicture','pictures'],
-}
+  data(){
+    return{
+     IsEntry:false
+    }
+  },
+  methods:{
+    startaniem(){
+      this.IsEntry = true;
+      return this.IsEntry;
+    }
+  }
+  }
+
 
 </script>
 
@@ -53,6 +70,8 @@ export default{
   .works_info{
     background-color: #F4F2F0;
     padding:2.2rem 4.5rem 0rem 4.5rem ;
+
+    // タイトルと役割・製作期
     .works_info_title{
       text-align: left;
       font: normal normal 300 5.3rem/6.4rem Montserrat;
@@ -90,6 +109,8 @@ export default{
         }
       }
     }
+
+    // トップ画像
     .top_img{
       padding-bottom: 2rem;
           img{
@@ -97,6 +118,8 @@ export default{
             object-fit: cover;
           }
     }
+
+    // 製作物情報
     .works_info_set{
       display: flex;
       justify-content: space-between;
@@ -128,7 +151,7 @@ export default{
       }
       .works_info_right{
         width:40%;
-        padding-top: 0.5rem;
+        padding-top: 0.6rem;
         .works_info_sentence{
           font-family: 'Noto Sans JP', sans-serif;
           font-weight: 400;
@@ -141,14 +164,49 @@ export default{
         }
       }
     }
+
+    // 製作物画像リスト
     .img_list{
       .img_picture{
         padding-bottom: 3rem;
           img{
             width:100%;
             object-fit: cover;
+            display: inline-block;       /* 奥行表示のためのブロック化 */
+            opacity: 1;
+            transform:perspective(400px)  scale3d(0.9,0.9,0.9)  translateY(7rem)  rotateX(-4deg);
           }
+            & .isShowAnime{
+              animation-name: FlipFadeIn;
+              animation-duration: 1s;
+              animation-timing-function:ease-in-out;
+              animation-fill-mode: forwards;
+            }
       }
     }
   }
+
+  // アニメーションの作成
+
+ //画像リストの出現
+    @keyframes FlipFadeIn {
+    0%{-webkit-transform:perspective(400px)  scale3d(0.9,0.9,0.9)  translateY(7rem)  rotateX(-4deg);
+       transform:perspective(400px)  scale3d(0.9,0.9,0.9)  translateY(7rem)  rotateX(-4deg);
+       opacity: 0;
+       -webkit-transform-origin:top;
+       transform-origin: top;
+      }
+    40%{-webkit-transform:perspective(400px)  scale3d(0.9,0.9,0.9)  rotateX(-5deg);
+        transform:perspective(400px)  scale3d(0.9,0.9,0.9)  rotateX(-5deg);
+        opacity: 1;
+        -webkit-transform-origin:top;
+        transform-origin: top;
+      }
+    100%{-webkit-transform:perspective(400px)  scale3d(1,1,1)  rotateX(0deg);
+        transform:perspective(400px)  scale3d(1,1,1)  rotateX(0deg);
+        opacity: 1;
+        -webkit-transform-origin:top;
+        transform-origin: top;
+      }
+}
 </style>
