@@ -1,6 +1,6 @@
 <template>
  <BackButton></BackButton>
-<WorksExplain 
+<WorksExplain
   :title="title"
   :date="date"
   :heading="heading"
