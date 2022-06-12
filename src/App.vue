@@ -1,74 +1,81 @@
 <template>
-<div>
-  <router-view></router-view>
-</div>
+  <div :style="bgColor">
+    <Header></Header>
+    <!-- <div data-scroll-container> -->
+      <router-view v-slot="{ Component }">
+        <transition name="transition" mode="out-in">
+          <component :is="Component"></component>
+        </transition>
+      </router-view>
+    </div>
+  <!-- </div> -->
 </template>
 
 <script>
+import { reactive } from 'vue';
+import Header from './components/Header.vue'
+// import LocomotiveScroll from 'locomotive-scroll';
+
+export default {
+  components: {
+    Header,
+  },
+  setup() {
+
+    const bgColor = reactive({
+      backgroundColor: '#F4F2F0',
+    });
+
+  //   const setScroll = () => {
+  //     new LocomotiveScroll({
+  //       el: document.querySelector('[data-scroll-container]'),
+  //       smooth: true
+  //     });
+  //   }
+
+  //   onMounted(() => {
+  //     setScroll();
+  //   })
+
+    return {
+      bgColor,
+      // setScroll
+    }
+
+  },
+}
 
 </script>
 
-<style>
+<style scoped>
+.transition-enter-active {
+  animation: transition-fade-in .7s ease-in-out;
+}
 
-/*リセットCSS--------------------------------*/
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+.transition-enter-to,
+
+.transition-leave-active {
+  transition: opacity .3s;
+  opacity: 1;
 }
-body,
-h1,
-h2,
-h3,
-h4,
-p,
-figure,
-blockquote,
-dl,
-dd {
-  margin: 0;
+
+.transition-leave-to {
+  opacity: 0;
 }
-ul[role="list"],
-ol[role="list"] {
-  list-style: none;
-}
-html:focus-within {
-  scroll-behavior: smooth;
-}
-body {
-  min-height: 100vh;
-  text-rendering: optimizeSpeed;
-  line-height: 1.5;
-}
-a:not([class]) {
-  text-decoration-skip-ink: auto;
-}
-img,
-picture {
-  max-width: 100%;
-  display: block;
-}
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-@media (prefers-reduced-motion: reduce) {
-  html:focus-within {
-    scroll-behavior: auto;
+
+/* アニメーションの定義 */
+@keyframes transition-fade-in {
+  0% {
+    opacity: 0;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+
+  70% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
-/*リセットcss終了---------------------------------*/
-
-
 </style>
 

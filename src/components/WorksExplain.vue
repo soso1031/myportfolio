@@ -1,5 +1,14 @@
 <template>
-  <div class="works_info">
+  <div class="works_info" v-bind:class="{colorChange:isColorChange}">
+
+    <!-- 閉じるボタン -->
+    <div class=layout>
+      <router-link to="/" class="close_button layout_right">
+        <span></span>
+        <span></span>
+      </router-link>
+    </div>
+
 
     <!-- タイトルと役割・製作期 -->
     <h1 class="works_info_title">{{ title }}</h1>
@@ -21,7 +30,7 @@
     </div>
 
     <!-- 製作物の情報のセット -->
-    <div class="works_info_set">
+    <div class="works_info_set" ref="observeTarget">
       <div class="works_info_left">
         <h2 class="works_info_heading">{{ heading }}</h2>
         <p class="works_info_subheading">{{ subHeading }}</p>
@@ -36,6 +45,7 @@
       <div class="img_picture" v-for="picture in pictures" :key="picture">
         <!-- IntersectionObserverでアニメーションを追加 -->
         <img :src="picture" :ref="addImgRef">
+        <!-- <div class = lazy_loaded_cover></div> -->
       </div>
     </div>
 
@@ -46,25 +56,28 @@
 <script>
 import { onMounted } from "vue"
 export default {
-  props: ['title', 'role', 'date', 'heading', 'subHeading', 'sentence', 'topPicture', 'pictures'],
+  props: ['title', 'role', 'date', 'heading', 'subHeading', 'sentence', 'topPicture', 'pictures','colorChange'],
   setup() {
 
-    // refで要素を取得配列にプッシュ
+
+    // imgのレンダリング↓
+
+    // refで画像を取得配列にプッシュ
     let imgRefs = [];
     const addImgRef = (ref) => {
       imgRefs.push(ref);
     }
 
     //発火するコールバック関数
-    const flipin = (entries) => {
+    const flipin = (entries, object) => {
       if (entries[0].isIntersecting) {
         entries[0].target.classList.add("isShowAnime");
       }
-
+      object.unobserve(entries[0]);
     }
     // オプションの設定
     const options = {
-      threshold: 0.1
+      threshold: 0.15
     }
     // `onMounted`内で監視する要素を取得
     onMounted(() => {
@@ -76,8 +89,7 @@ export default {
     })
 
     return {
-      addImgRef
-      // scrollTarget,
+      addImgRef,
     }
   }
 }
@@ -92,15 +104,86 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 
 .works_info {
-  background-color: #F4F2F0;
-  padding: 5.5rem 4.5rem 0rem 4.5rem;
+  padding: 0 4.5rem 0rem 4.5rem;
+
+  .layout{
+  padding-top: 5rem;
+  padding-bottom: 2rem;
+  display: flex;
+  justify-content: end;
+.close_button{
+  padding: 0.1rem;
+  display: block;
+  width: 17.8rem;
+  height: 4.74rem;
+  position: relative;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover span:nth-of-type(1)::before{
+    animation-name: LineOutIN;
+    animation-duration: 0.5s;
+    animation-timing-function:ease-in-out;
+  }
+  &:hover span:nth-of-type(2)::before{
+    animation-name: LineOutIN;
+    animation-duration: 0.5s;
+    animation-delay: 0.2s;
+    animation-timing-function:ease-in-out;
+  }
+}
+
+.close_button  span:nth-of-type(1) {
+    content: '';
+    display: block;
+    width: 18.3rem;
+    height: 0.1rem;
+    position: absolute;
+    transform: translate(-50%,-50%) rotate(15deg);
+    top: 50%;
+    left: 50%;
+    &::before{
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #313131;
+      // background-color: #FFFFFF;
+    }
+  }
+.close_button  span:nth-of-type(2) {
+    content: '';
+    display: block;
+    width: 18.3rem;
+    height: 0.1rem;
+    position: absolute;
+    transform: translate(-50%,-50%) rotate(-15deg);
+    top: 50%;
+    left: 50%;
+    &::before{
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #313131;
+      // background-color: #FFFFFF;
+
+    }
+  }
+}
 
   // タイトルと役割・製作期
   .works_info_title {
     text-align: left;
     font: normal normal 300 5.3rem/6.4rem Montserrat;
     letter-spacing: 0.37rem;
-    color: #313131;
+    padding-top: 5.6rem;
   }
 
   .works_info_data {
@@ -119,7 +202,7 @@ export default {
         line-height: 1.6;
         text-align: left;
         letter-spacing: 0.16rem;
-        color: #808080;
+        opacity: .4;
       }
 
       &.bottom10 {
@@ -134,7 +217,6 @@ export default {
         line-height: 1.6;
         text-align: left;
         letter-spacing: 0.16rem;
-        color: #313131;
       }
     }
   }
@@ -167,7 +249,6 @@ export default {
         line-height: 1.25;
         text-align: left;
         letter-spacing: 0.315rem;
-        color: #313131;
         text-align: left;
         margin-bottom: 2.5rem;
       }
@@ -179,7 +260,6 @@ export default {
         text-align: left;
         font-size: 1.3rem;
         letter-spacing: 0.273rem;
-        color: #3E3E3E;
       }
     }
 
@@ -195,7 +275,6 @@ export default {
         font-size: 1.4rem;
         letter-spacing: 0.294rem;
         line-height: 2.28;
-        color: #3E3E3E;
       }
     }
   }
@@ -204,7 +283,7 @@ export default {
   .img_list {
     .img_picture {
       padding-bottom: 1.5rem;
-
+      position: relative;
 
       img {
         width: 100%;
@@ -215,15 +294,36 @@ export default {
 
       & .isShowAnime {
         animation-name: FadeIn;
-        animation-duration: 0.7s;
+        animation-duration: 0.5s;
         animation-timing-function: ease-in-out;
         animation-fill-mode: forwards;
       }
+
+      // .lazy_loaded_cover{
+      //   position: absolute;
+      //   top: 0;
+      //   left: 0;
+      //   width: 100%;
+      //   height: 100%;
+      //   background-color: #c4c4c4;
+      //   opacity: 0.2;
+      //   transition: opacity .6s;
+      //   z-index: 100;
+      // }
     }
   }
 }
 
 // アニメーションの作成
+
+// 閉じるボタン
+
+  @keyframes LineOutIN{
+    0%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);-webkit-transform-origin:100% 0;transform-origin:100% 0}
+    50%{-webkit-transform:scale3d(0,1,1);transform:scale3d(0,1,1);-webkit-transform-origin:100% 0;transform-origin:100% 0}
+    51%{-webkit-transform:scale3d(0,1,1);transform:scale3d(0,1,1);-webkit-transform-origin:0 0;transform-origin:0 0}
+    100%{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);-webkit-transform-origin:0 0;transform-origin:0 0}
+}
 
 //画像リストの出現
 @keyframes FadeIn {
